@@ -4,9 +4,6 @@ title = "Dom's Blog"
 theme = "paper"
 
 [params]
-avatar = "https://github.com/domcorvasce.png"
-name = "Dom Corvasce"
-monoDarkIcon = false
 math = true
 github = "domcorvasce"
 linkedin = "domcorvasce"
