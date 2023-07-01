@@ -1,0 +1,25 @@
+baseURL = "https://domcorvasce.github.io/"
+languageCode = "en-us"
+title = "Dom's Blog"
+theme = "paper"
+
+[params]
+avatar = "https://github.com/domcorvasce.png"
+name = "Dom Corvasce"
+monoDarkIcon = false
+math = true
+github = "domcorvasce"
+linkedin = "domcorvasce"
+color = "linen"
+
+[menu]
+[[menu.main]]
+identifier = "articles"
+name = "Articles"
+url = "/"
+weight = 10
+
+[[menu.main]]
+identifier = "about"
+name = "About"
+url = "/about/"
