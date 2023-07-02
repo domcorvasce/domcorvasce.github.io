@@ -1,6 +1,6 @@
 baseURL = "https://domcorvasce.github.io/"
 languageCode = "en-us"
-title = "Dom's Blog"
+title = "Dom's Bytes"
 theme = "paper"
 
 [params]
