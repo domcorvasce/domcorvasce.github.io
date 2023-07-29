@@ -26,7 +26,13 @@ The WEI attesters&mdash;["a relatively small group"](https://github.com/RupertBe
 
 Let's consider the **best case** scenario for a moment: Google doesn't abuse their power. Instead, they go out of their way to ensure everyone has equal access to this functionality. As people stop being bombarded with CAPTCHAs, social media websites cut down on fake engagement, and advertisers stop fingerprinting to ensure ads delivery to real humans, we start asking ourselves why WEI took so long!
 
-Now back to reality: no one really cares about the best scenario though. It’s not realistic. Once you have power it's very tempting to abuse it, and it’s very hard to take it away from you. Google gained their monopoly in web browsing and we let them. We had and still have bigger problems in our lives than letting a company control which piece of software we browse the web on.
+Now back to reality: no one really cares about the best scenario. It’s not realistic. Once you have power it's very tempting to abuse it, and it’s very hard to take it away from you.
+
+The **worst case** scenario is actually way more interesting. As more and more websites start adopting WEI, the mainstream web becomes a walled-garden with Google owning the keys to the entrance. Most popular services such as Netflix, Spotify, and Meta's stop letting unattested traffic in as it objectively makes sense from a security and business perspective.
+
+Meanwhile, Google is able to dictate which combination of hardware and software is deemed trustworthy making it hard for new companies to innovate while making it easy for existing companies to double-down on planned obsolescence as "oops!... TPM 2.0 is no longer a valid attester".
+
+Leaving scenarios aside, Google got their monopoly in web browsing and we let them. We had and still have bigger problems in our lives than worrying about a company being one in control of the piece of software we browse the web on.
 
 They are now in the position to go ahead and implement this proposal even if W3C disagrees.
-What is left to us is to ask: is this CAPTCHA-free bot-less garden-walled world worth it?
+What is left to us is to ask: is this CAPTCHA-free bot-less walled-garden world worth it?
