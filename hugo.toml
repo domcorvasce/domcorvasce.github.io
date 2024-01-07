@@ -5,8 +5,6 @@ theme = "paper"
 
 [params]
 math = true
-github = "domcorvasce"
-linkedin = "domcorvasce"
 color = "linen"
 
 [menu]
