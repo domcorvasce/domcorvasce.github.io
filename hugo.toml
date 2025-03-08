@@ -1,0 +1,56 @@
+baseURL = 'https://domcorvasce.com/'
+languageCode = 'en-us'
+title = 'Domenico Corvasce'
+theme = 'typo'
+
+[params]
+description = 'My personal website'
+
+theme = 'auto'
+colorPalette = 'default'
+hideHeader = false
+
+homeIntroTitle = 'Hello there!'
+homeIntroContent = """
+Nice to meet you. I'm a Software Engineer from Italy, currently working at
+[Prima Assicurazioni](https://helloprima.com) on feature engineering tools.
+Outside of work, I'm a movie buff and you can often find me at
+the local movie theather catching up on the latest releases.
+
+All opinions are my own.
+"""
+
+homeCollectionTitle = 'Posts'
+homeCollection = 'posts'
+
+paginationSize = 100
+listSummaries = true
+listDateFormat = 'Jan 2, 2006'
+
+breadcrumbs = true
+
+# Social icons
+[[params.social]]
+name = "linkedin"
+url = "https://www.linkedin.com/in/domcorvasce/"
+
+[[params.social]]
+name = "github"
+url = "https://github.com/domcorvasce"
+
+[[params.social]]
+name = "bluesky"
+url = "https://domcorvasce.bsky.social/"
+
+# Main menu pages
+[[params.menu]]
+name = "home"
+url = "/"
+
+[[params.menu]]
+name = "posts"
+url = "/posts"
+
+[markup]
+[markup.highlight]
+style = 'algol'
