@@ -54,3 +54,7 @@ url = "/posts"
 [markup]
 [markup.highlight]
 style = 'algol'
+
+[caches]
+[caches.images]
+dir = ':cacheDir/images'
