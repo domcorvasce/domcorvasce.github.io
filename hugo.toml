@@ -12,10 +12,9 @@ hideHeader = false
 
 homeIntroTitle = 'Hello there!'
 homeIntroContent = """
-Nice to meet you. I'm a Software Engineer from Italy, currently working at
-[Prima Assicurazioni](https://helloprima.com) on feature engineering tools.
-Outside of work, I'm a movie buff and you can often find me at
-the local movie theather catching up on the latest releases.
+Nice to meet you, my name is Domenico. I am a Software Engineer interested in database systems, distributed systems, and systems performance optimization.
+
+I am based in Italy where I work at [Prima Assicurazioni](https://helloprima.com) on systems integration.
 
 All opinions are my own.
 """
