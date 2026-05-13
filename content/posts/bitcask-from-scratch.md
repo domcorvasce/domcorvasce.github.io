@@ -127,18 +127,53 @@ Let’s look at the code handling the writing of new records. There is an additi
 
 My implementation delegates the responsibility of creating new data files, and writing and flushing data to it, to the DataFile struct. At all times the Rcask struct maintains a reference to one DataFile instance which represents the data file accepting writes.
 
-## Keydir
+## Reading data
 
-The keydir can be populated either of two ways: incrementally, when adding or deleting a new key-value pair, or from scratch on opening an existing Bitcask database. We represent the keydir in-memory as a hash table.
+The process of reading a key's value is two-step:
+1. we look up the key in the keydir to fetch the data file, value size, file offset
+2. we read the value at the specified file offset
+
+The keydir can be populated either of two ways: incrementally, when adding or deleting a new key-value pair, or from scratch on opening an existing Bitcask database.
+
+The keydir is simply an in-memory hash table.
 
 The incremental approach is simple enough it doesn’t require a thorough discussion. Everytime we commit a write to disk we update the keydir with the file ID and the offset at which the key is stored.
 
-<<code>>
+```rust
+    pub fn put(&mut self, key: &[u8], value: &[u8]) -> std::io::Result<()> {
+        let value_offset = self.data_file.put(key, value)?;
+        let keydir_entry = KeydirEntry::new(
+            self.data_file.timestamp,
+            value.len().try_into().unwrap(),
+            value_offset,
+        );
+        self.keydir.insert(key.into(), keydir_entry);
 
-The process of building the keydir from scratch is slightly more involved process. We need to iterate over each data file, starting from the most recent ones, collecting keys as we go, discarding tombstones when we meet them. The original paper describes hint files as a way to speed up building a keydir from scratch but I decided to discard them during this first iteration. Hint files are built during the merge process.
+        Ok(())
+    }
+```
 
-<<code>>
+The process of building the keydir from scratch is slightly more involved.
 
-Bitcask’s key feature is that reads only require a seek syscall. The get method is thus implemented as:
+We need to iterate over each data file, starting from the most recent one, populating the keydir as we go, and discarding tombstones when we encounter.
 
-<<code>>
+```
+```
+
+> Note: The original paper introduces **hint files**. These files are generated as part of the merge process, and they provide information about the keys location on disk. They speed up the keydir initialization.
+
+The code for reading the value associated to a key is pretty simple:
+
+```rust
+            let mut buf = vec![0u8; entry.value_size.try_into().unwrap()];
+            file.read_exact_at(buf.as_mut(), entry.value_offset)
+                .unwrap();
+```
+
+It requires a single file seek.
+
+## Wrapping up
+
+* strace
+* benchmark
+* next steps
