@@ -20,7 +20,7 @@ Bitcask was designed for [Riak K/V](https://docs.riak.com/riak/kv/latest/index.h
 ![](/images/bitcask-architecture.png)
 
 There are three components to the Bitcask architecture:
-- a set of **data files** that make up a database instance: at any time only one process can be writing data. There can be other processes reading data, but for the first iteration I did not assume that
+- a set of **data files** that make up a database instance: at any time only one process can be writing data to the active data file. There can be other processes reading data, but for the first iteration I did not assume that
 - an in-memory data structure holding ALL the keys and their location on disk. This data structure is called **keydir**. The keydir is updated after the record has been written to disk
 - a **merge process** for compacting data files, getting rid of dead keys and generating **hint files** for speeding up the keydir generation when an existing database is opened
 
@@ -33,7 +33,7 @@ Let’s get started!
 Each Bitcask database is a directory of data files.
 
 ```rust
-pub fn open(path: &PathBuf) -> std::io::Result<Self> {
+pub fn open(path: &PathBuf, options: StoreOptions) -> std::io::Result<Self> {
     if let Err(err) = std::fs::create_dir(path)
         && err.kind() != ErrorKind::AlreadyExists
     {
@@ -41,7 +41,7 @@ pub fn open(path: &PathBuf) -> std::io::Result<Self> {
     }
 ```
 
-At any time there can be a single process writing to the file, which we can enforce by putting an [advisory lock](https://domcorvasce.com/posts/mandatory-and-advisory-locks/) on the file. Linux does not enforce advisory locks at OS level so we have to worry about unlocking the file if the program crashes.
+At any time there can be a single process writing to the active data file. I guarantee this by creating a lockfile in each database directory. The program will crash if it tries to claim an [exclusive advisory lock](https://domcorvasce.com/posts/mandatory-and-advisory-locks/) on a lockfile that already has one.
 
 ```rust
     let lockfile = Self::get_lockfile(path)?;
@@ -50,22 +50,32 @@ At any time there can be a single process writing to the file, which we can enfo
     }
 ```
 
-At any time there can be only one active data file receiving writes. Once the file reaches a certain size (see [`bitcask.max_file_size`](https://docs.riak.com/riak/kv/latest/configuring/backend/index.html#:~:text=bitcask.max_file_size)) or we close the file we open a new one and never write to the old one.
+The lock is released as soon as the file handle goes out-of-scope, so I keep the file handle as part of the database instance.
 
 ```rust
     Ok(Self {
         path: path.into(),
+        options,
         lockfile,
         data_file: DataFile::new(path)?,
+        keydir: HashMap::new(),
     })
 }
 ```
 
-How are we going to name the data files? We have two requirements in this regard:
-1. it should be reasonably easy to get the latest data file
-2. it should be reasonably easy to rebuild a keydir so we want to iterate on the most recent data files first
+At any time there is one active data file receiving writes. Once the file reaches a certain size (see [`bitcask.max_file_size`](https://docs.riak.com/riak/kv/latest/configuring/backend/index.html#:~:text=bitcask.max_file_size)) it is closed and a new data file is created. This logic is handled in the `put` method:
 
-I thought about naming data files using sequential numbers (0.dat, 1.dat, and so on). It turns out the original implementation does something very similar to that. The first data file name is set to the UNIX timestamp it was created. All subsequent data file names increment that timestamp. See the code at https://github.com/basho/bitcask/blob/d8958d98d6619a1a8b9e71a7a7b19a7d9fb38ef0/src/bitcask_fileops.erl#L66. I decided to follow this approach.
+<<code>>
+
+## Data files
+
+The `DataFile::new` method is responsible for creating a new data file.
+
+The only concern I had with regards to file naming was that it should be reasonably easy to sort data files by the most recent.
+Initially, I considered using sequential numbers (`0.dat`, `1.dat`, and so on).
+
+The original implementation follows a [slightly different approach](https://github.com/basho/bitcask/blob/d8958d98d6619a1a8b9e71a7a7b19a7d9fb38ef0/src/bitcask_fileops.erl#L66).
+The first data file name is set to the current UNIX timestamp. All subsequent data file names increment that timestamp by one.
 
 ```rust
     pub(crate) fn new(path: &Path) -> Result<Self> {
@@ -76,6 +86,24 @@ I thought about naming data files using sequential numbers (0.dat, 1.dat, and so
             .open(path.join(format!("{}.{}", timestamp, Self::EXT)))?;
 
         Ok(Self { handle, timestamp })
+    }
+```
+
+The utility computing the timestamp used in the file name looks like this:
+
+```rust
+    fn get_max_data_file_timestamp(path: &Path) -> Result<u64> {
+        Ok(std::fs::read_dir(path)?
+            .filter_map(|entry| {
+                if /* is data file then extract `timestamp` from file name */
+                {
+                    return Some(timestamp);
+                }
+
+                None
+            })
+            .max()
+            .map_or(Self::get_unix_timestamp(), |timestamp| timestamp + 1))
     }
 ```
 
