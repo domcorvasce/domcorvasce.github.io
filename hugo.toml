@@ -6,7 +6,7 @@ theme = 'typo'
 [params]
 description = 'My personal website'
 
-theme = 'auto'
+theme = 'light'
 colorPalette = 'default'
 hideHeader = false
 
@@ -57,3 +57,7 @@ style = 'algol'
 [caches]
 [caches.images]
 dir = ':cacheDir/images'
+
+[[module.mounts]]
+source = 'images'
+target = 'static/images'

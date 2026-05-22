@@ -7,7 +7,7 @@ toc = false
 summary = " "
 +++
 
-*Disclaimer: I did not use LLMs to write this blog post, but I did use them to review it.*
+*Disclaimer: All writing is my own. I did use LLMs to fact-check and catch spelling errors.*
 
 I've been reimplementing the Bitcask storage engine from scratch.
 

@@ -7,6 +7,8 @@ toc = false
 summary = " "
 +++
 
+*Disclaimer: All writing is my own. I did use LLMs to fact-check and catch spelling errors.*
+
 While implementing [Bitcask](https://riak.com/assets/bitcask-intro.pdf) from scratch I had to ensure that at any time one single process could append data to the _data file_.
 
 I've enforced this invariant by creating a _lockfile_ into each database directory, acquiring a **file lock** on the lockfile every time a process opens the database. The process errors out if it tries to acquire a lock on an already locked database.
