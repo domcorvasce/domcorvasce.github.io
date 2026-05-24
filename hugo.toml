@@ -35,10 +35,6 @@ url = "https://www.linkedin.com/in/domcorvasce/"
 name = "github"
 url = "https://github.com/domcorvasce"
 
-[[params.social]]
-name = "bluesky"
-url = "https://domcorvasce.bsky.social/"
-
 # Main menu pages
 [[params.menu]]
 name = "home"
