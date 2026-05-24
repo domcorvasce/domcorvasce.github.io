@@ -26,8 +26,6 @@ paginationSize = 100
 listSummaries = true
 listDateFormat = 'Jan 2, 2006'
 
-breadcrumbs = true
-
 # Social icons
 [[params.social]]
 name = "linkedin"
